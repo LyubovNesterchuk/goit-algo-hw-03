@@ -1,36 +1,56 @@
 # task 1  (кількість днів між заданою датою і поточною датою)
 
-def get_days_from_today(date):
-    pass
+from datetime import datetime
+
+def get_days_from_today(date: str) -> int:
+
+    try:
+        given_date = datetime.strptime(date, "%Y-%m-%d").date()
+        today = datetime.today().date()
+        diff =  today - given_date 
+        return diff.days
+    
+    except ValueError:
+        return "Невірний формат дати. Використовуйте 'YYYY-MM-DD'"
+
+
+print(get_days_from_today("2021-10-09")) 
+print(get_days_from_today("2026-05-05")) 
 
 
 
-get_days_from_today("2021-10-09") #157
 
+# task 2 (згенерувати набір унікальних випадкових чисел для лотерей,
+# де щоб виграти головний приз лотереї, необхідний збіг кількох номерів 
+# на лотерейному квитку з числами, що випали випадковим чином і в певному діапазоні 
+# під час чергового тиражу)
+import random
 
+def get_numbers_ticket(min: int, max: int, quantity: int) -> list[int]:
 
-# task 2
+    if min < 1 or max > 1000 or min > max:
+        return []
+    
+    if quantity > (max - min + 1):
+        return []
 
-def get_numbers_ticket(min, max, quantity):
-    pass
+    numbers_set = set()
+    
+    while len(numbers_set) < quantity:
+        num = random.randint(min, max) 
+        numbers_set.add(num)                    
 
-
-
+    return sorted(numbers_set)
 
 lottery_numbers = get_numbers_ticket(1, 49, 6)
 print("Ваші лотерейні числа:", lottery_numbers)
 
 
 
-# task 3 
+# task 3 (функція, яка автоматично нормалізує номери телефонів до потрібного формату,
+# видаляючи всі зайві символи та додаючи міжнародний код країни, якщо потрібно.)
 
-def normalize_phone(phone_number):
-    pass
-
-
-
-
-
+import re
 raw_numbers = [
     "067\\t123 4567",
     "(095) 234-5678\\n",
@@ -42,15 +62,32 @@ raw_numbers = [
     "38050-111-22-22",
     "38050 111 22 11   ",
 ]
+def normalize_phone(phone_number: str) -> str:
+    pattern = r"[^0-9]"
+    sanitized_numbers = []
+    for phone in phone_number:
+        cleaned_number = re.sub(pattern, '', phone)
 
-sanitized_numbers = [normalize_phone(num) for num in raw_numbers]
+        if cleaned_number.startswith("0") and len(cleaned_number) == 10:
+            cleaned_number = "38" + cleaned_number
+
+        if cleaned_number.startswith("38"):
+            cleaned_number = "+" + cleaned_number  
+
+        sanitized_numbers.append(cleaned_number)
+
+    return sanitized_numbers
+
+
+sanitized_numbers = normalize_phone(raw_numbers)
+
 print("Нормалізовані номери телефонів для SMS-розсилки:", sanitized_numbers)
 
 
 
-# task 4
+# task 4 (автоперевірка)
 
-'''from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta
 
 users = [
     {"name": "Bill Gates", "birthday": "1995.3.15"},
@@ -116,4 +153,4 @@ def get_upcoming_birthdays(users, days=7):
     return upcoming_birthdays
 
 
-print(get_upcoming_birthdays(prepared_users, days=7))'''
+print(get_upcoming_birthdays(prepared_users, days=7))
